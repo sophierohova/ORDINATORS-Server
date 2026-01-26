@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './users/users.module'; // ДОЛЖЕН БЫТЬ ИМПОРТ
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { UsersModule } from './users/users.module';
       synchronize: process.env.NODE_ENV !== 'production',
     }),
     AuthModule,
-    UsersModule,
+    UsersModule, // ВАЖНО: этот модуль должен быть здесь
   ],
 })
 export class AppModule {}
