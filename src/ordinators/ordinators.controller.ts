@@ -36,4 +36,9 @@ export class OrdinatorsController {
     return this.ordinatorsService.update(id, dto);
  }
 
+ @Get('table')
+findForTable() {
+  return this.ordinatorsService.findAllForTable();
+}
+
 }
