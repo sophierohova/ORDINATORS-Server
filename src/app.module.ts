@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './users/users.module'; // ДОЛЖЕН БЫТЬ ИМПОРТ
+import { OrdinatorsModule } from './ordinators/ordinators.module';
 
 @Module({
   imports: [
@@ -17,10 +18,11 @@ import { UsersModule } from './users/users.module';
       password: process.env.DB_PASSWORD || 'password',
       database: process.env.DB_NAME || 'Residents',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: process.env.NODE_ENV !== 'production',
+      synchronize: false, // process.env.NODE_ENV !== 'production',
     }),
     AuthModule,
-    UsersModule,
+    UsersModule, // ВАЖНО: этот модуль должен быть здесь
+    OrdinatorsModule,
   ],
 })
 export class AppModule {}

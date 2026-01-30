@@ -47,4 +47,48 @@ export class UsersService {
     
     return null;
   }
+
+  // ДОБАВЛЯЕМ ЭТИ МЕТОДЫ:
+
+  // Получить всех пользователей (без паролей)
+  async findAll(): Promise<any[]> {
+    const workers = await this.workersRepository.find({
+      select: ['id', 'fio', 'login', 'role'],
+      order: { id: 'ASC' }
+    });
+    return workers;
+  }
+
+  // Обновить пользователя
+  async update(id: number, updateData: any): Promise<Worker> {
+    const worker = await this.workersRepository.findOne({ where: { id } });
+    
+    if (!worker) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    // Если обновляется пароль - хешируем его
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, 10);
+    }
+
+    // Обновляем только разрешенные поля
+    if (updateData.fio) worker.fio = updateData.fio;
+    if (updateData.login) worker.login = updateData.login;
+    if (updateData.role) worker.role = updateData.role;
+    if (updateData.password) worker.password = updateData.password;
+    
+    return this.workersRepository.save(worker);
+  }
+
+  // Удалить пользователя
+  async remove(id: number): Promise<void> {
+    const worker = await this.workersRepository.findOne({ where: { id } });
+    
+    if (!worker) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    await this.workersRepository.remove(worker);
+  }
 }
