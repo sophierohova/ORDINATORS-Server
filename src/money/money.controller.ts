@@ -23,22 +23,4 @@ export class MoneyController {
   findAll() {
     return this.moneyService.findAll();
   }
-
-  @Get('by-ordinator/:id')
-  findByOrdinator(@Param('id') id: string) {
-    return this.moneyService.findByOrdinator(id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() dto: UpdateMoneyDto,
-  ) {
-    return this.moneyService.update(+id, dto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.moneyService.remove(+id);
-  }
 }

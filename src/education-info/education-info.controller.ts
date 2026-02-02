@@ -9,25 +9,8 @@ import { UpdateEducationInfoDto } from './dto/update-education-info.dto';
 export class EducationInfoController {
   constructor(private service: EducationInfoService) {}
 
-  @Get('by-ordinator/:ordinatorsId')
-  get(@Param('ordinatorsId') ordinatorsId: string) {
-    return this.service.findByOrdinator(ordinatorsId);
-  }
-
   @Post()
   create(@Body() dto: CreateEducationInfoDto) {
     return this.service.create(dto);
   }
-
-   @Delete(':ordinatorsId')
-    remove(@Param('ordinatorsId') ordinatorsId: string) {
-      return this.service.remove(ordinatorsId);
-   }
-
-   @Patch(':ordinatorsId')
-   update(
-    @Param('ordinatorsId') ordinatorsId: string,
-    @Body() dto: UpdateEducationInfoDto,) {
-       return this.service.update(ordinatorsId, dto);
-   }
 }

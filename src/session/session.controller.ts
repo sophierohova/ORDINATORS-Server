@@ -23,22 +23,4 @@ export class SessionController {
   findAll() {
     return this.sessionService.findAll();
   }
-
-  @Get('by-ordinator/:id')
-  findByOrdinator(@Param('id') id: string) {
-    return this.sessionService.findByOrdinator(id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() dto: UpdateSessionDto,
-  ) {
-    return this.sessionService.update(+id, dto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sessionService.remove(+id);
-  }
 }

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Ordinator } from '../../ordinators/entities/ordinator.entity';
 
 @Entity('university')
 export class University {
@@ -8,21 +9,22 @@ export class University {
   @Column({ type: 'text' })
   name: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   graduation_year: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   department: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   profile: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   speciality: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   education_form: string;
 
-  @Column({ type: 'text' })
-  ordinators_id: string;
+  @ManyToOne(() => Ordinator, o => o.universities, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'ordinators_id' })
+  ordinator: Ordinator;
 }

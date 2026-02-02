@@ -12,22 +12,12 @@ export class EducationInfoService {
     private repo: Repository<EducationInfo>,
   ) {}
 
-  findByOrdinator(ordinators_id: string) {
+  findByOrdinator(ordinators_id: number) {
     return this.repo.findOne({ where: { ordinators_id } });
   }
 
   async create(dto: CreateEducationInfoDto) {
     const entity = this.repo.create(dto);
     return this.repo.save(entity);
-  }
-
- async remove(ordinators_id: string) {
-    await this.repo.delete({ ordinators_id });
-    return { deleted: true };
-  }
-  
-  async update(ordinators_id: string, dto: UpdateEducationInfoDto) {
-    await this.repo.update({ ordinators_id }, dto);
-    return this.findByOrdinator(ordinators_id);
   }
 }

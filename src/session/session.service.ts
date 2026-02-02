@@ -19,21 +19,4 @@ export class SessionService {
   findAll() {
     return this.sessionRepository.find();
   }
-
-  findByOrdinator(ordinators_id: string) {
-    return this.sessionRepository.find({
-      where: { ordinators_id },
-    });
-  }
-
-  async update(id: number, dto: UpdateSessionDto) {
-    await this.sessionRepository.update(id, dto);
-    return this.sessionRepository.findOne({
-      where: { session_id: id },
-    });
-  }
-
-  async remove(id: number) {
-    return this.sessionRepository.delete(id);
-  }
 }

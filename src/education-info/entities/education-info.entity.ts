@@ -1,12 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { Ordinator } from '../../ordinators/entities/ordinator.entity';
 
 @Entity('education_info')
 export class EducationInfo {
   @PrimaryGeneratedColumn()
   education_id: number;
 
-  @Column({ type: 'text' })
-  ordinators_id: string;
+  ordinators_id: number;
 
   @Column({ type: 'date', nullable: true })
   date_enrollment: string;
@@ -22,4 +29,9 @@ export class EducationInfo {
 
   @Column({ type: 'text', nullable: true })
   reason_expulsion: string;
+
+  @ManyToOne(() => Ordinator, o => o.educationInfo)
+@JoinColumn({ name: 'ordinators_id' })
+ordinator: Ordinator;
+
 }

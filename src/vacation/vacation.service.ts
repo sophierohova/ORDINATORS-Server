@@ -16,23 +16,16 @@ export class VacationService {
     return this.vacationRepo.find();
   }
 
-  findByOrdinator(ordinators_id: string) {
-    return this.vacationRepo.find({
-      where: { ordinators_id },
-    });
-  }
+  findByOrdinator(ordinatorId: number) {
+  return this.vacationRepo.find({
+    where: {
+      ordinator: { id: ordinatorId },
+    },
+  });
+ }
 
   create(dto: CreateVacationDto) {
     const vacation = this.vacationRepo.create(dto);
     return this.vacationRepo.save(vacation);
-  }
-
-  async update(id: number, dto: UpdateVacationDto) {
-    await this.vacationRepo.update({ vacation_id: id }, dto);
-    return this.vacationRepo.findOneBy({ vacation_id: id });
-  }
-
-  async remove(id: number) {
-    return await this.vacationRepo.delete({ vacation_id: id });
   }
 }
