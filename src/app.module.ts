@@ -2,13 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module'; // ДОЛЖЕН БЫТЬ ИМПОРТ
+import { UsersModule } from './users/users.module'; 
 import { OrdinatorsModule } from './ordinators/ordinators.module';
-import { EducationInfoModule } from './education-info/education-info.module';
-import { UniversityModule } from './university/university.module';
-import { MoneyModule } from './money/money.module';
-import { SessionModule } from './session/session.module';
-import { VacationModule } from './vacation/vacation.module';
 
 @Module({
   imports: [
@@ -23,16 +18,11 @@ import { VacationModule } from './vacation/vacation.module';
       password: process.env.DB_PASSWORD || 'password',
       database: process.env.DB_NAME || 'Residents',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false, // process.env.NODE_ENV !== 'production',
+      synchronize: true, // process.env.NODE_ENV !== 'production',
     }),
     AuthModule,
-    UsersModule, // ВАЖНО: этот модуль должен быть здесь
+    UsersModule, 
     OrdinatorsModule,
-    EducationInfoModule,
-    UniversityModule,
-    MoneyModule,
-    SessionModule,
-    VacationModule,
   ],
 })
 export class AppModule {}
