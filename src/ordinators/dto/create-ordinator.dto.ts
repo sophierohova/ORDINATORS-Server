@@ -1,3 +1,4 @@
+// create-ordinator.dto.ts
 import { IsString, IsDate, IsOptional, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -41,9 +42,15 @@ export class CreateOrdinatorDto {
   @IsOptional()
   socialLeave?: string;
 
-  @IsString()
+  @Type(() => Date)
+  @IsDate()
   @IsOptional()
-  socialLeaveDuration?: string;
+  socialLeaveStart?: Date;
+
+  @Type(() => Date)
+  @IsDate()
+  @IsOptional()
+  socialLeaveEnd?: Date;
 
   @IsString()
   @IsOptional()
@@ -68,11 +75,29 @@ export class CreateOrdinatorDto {
 
   @IsString()
   @IsOptional()
-  enrollmentOrder?: string;
+  identNumber?: string;
+  
+  @IsString()
+  @IsOptional()
+  livingAddress?: string;
 
   @IsString()
   @IsOptional()
-  dismissalOrder?: string;
+  enrollmentOrderNumber?: string;
+
+  @Type(() => Date)
+  @IsDate()
+  @IsOptional()
+  enrollmentOrderDate?: Date;
+
+  @IsString()
+  @IsOptional()
+  dismissalOrderNumber?: string;
+
+  @Type(() => Date)
+  @IsDate()
+  @IsOptional()
+  dismissalOrderDate?: Date;
 
   @IsString()
   @IsOptional()
@@ -88,7 +113,7 @@ export class CreateOrdinatorDto {
 
   @IsString()
   @IsOptional()
-  password?: string;
+  password?: string; 
 
   @IsNumber()
   @IsOptional()

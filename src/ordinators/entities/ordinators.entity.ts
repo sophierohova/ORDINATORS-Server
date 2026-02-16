@@ -1,3 +1,4 @@
+// ordinators.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 import { University } from './university.entity';
 import { CurrentControl } from './current_control.entity';
@@ -38,8 +39,11 @@ export class Ordinator {
   @Column({ name: 'social_leave', nullable: true })
   socialLeave: string;
 
-  @Column({ name: 'social_leave_duration', nullable: true })
-  socialLeaveDuration: string;
+  @Column({ name: 'social_leave_start', type: 'date', nullable: true })
+  socialLeaveStart: Date;
+
+  @Column({ name: 'social_leave_end', type: 'date', nullable: true })
+  socialLeaveEnd: Date;
 
   @Column({ name: 'mobile_phone' })
   mobilePhone: string;
@@ -56,11 +60,17 @@ export class Ordinator {
   @Column({ name: 'registration_expiry', type: 'date', nullable: true })
   registrationExpiry: Date;
 
-  @Column({ name: 'enrollment_order' })
-  enrollmentOrder: string;
+  @Column({ name: 'enrollment_order_number', nullable: true })
+  enrollmentOrderNumber: string;
 
-  @Column({ name: 'dismissal_order', nullable: true })
-  dismissalOrder: string;
+  @Column({ name: 'enrollment_order_date', type: 'date', nullable: true })
+  enrollmentOrderDate: Date;
+
+  @Column({ name: 'dismissal_order_number', nullable: true })
+  dismissalOrderNumber: string;
+
+  @Column({ name: 'dismissal_order_date', type: 'date', nullable: true })
+  dismissalOrderDate: Date;
 
   @Column({ name: 'contract_info' })
   contractInfo: string;
@@ -72,7 +82,13 @@ export class Ordinator {
   login: string;
 
   @Column()
-  password: string;
+  password: string; 
+
+  @Column({ name: 'ident_number', nullable: true })
+  identNumber: string;
+
+  @Column({ name: 'living_address', nullable: true })
+  livingAddress: string;
 
   @Column({ name: 'rivsh_certificate' })
   rivshCertificate: string;
@@ -83,6 +99,7 @@ export class Ordinator {
   @Column({ name: 'distribution_info', nullable: true })
   distributionInfo: string;
 
+  // Связи
   @OneToOne(() => University, university => university.ordinator, {
     cascade: true,
     eager: true

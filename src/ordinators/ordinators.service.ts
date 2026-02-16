@@ -31,14 +31,14 @@ export class OrdinatorsService {
   ) {}
 
   async create(createOrdinatorDto: CreateOrdinatorDto) {
-
     let university: University | null = null;
     let currentControl: CurrentControl | null = null;
     let money: Money | null = null;
     let session: Session | null = null;
     let vacation: Vacation | null = null;
     let educationInfo: EducationInfo | null = null;
-
+  
+    // Создаем объекты связанных сущностей
     if (createOrdinatorDto.universityName) {
       university = this.universityRepository.create({
         name: createOrdinatorDto.universityName,
@@ -50,41 +50,41 @@ export class OrdinatorsService {
       });
       university = await this.universityRepository.save(university);
     }
-
+  
     if (createOrdinatorDto.scores) {
       currentControl = this.currentControlRepository.create({
         scores: createOrdinatorDto.scores,
       });
       currentControl = await this.currentControlRepository.save(currentControl);
     }
-
-    if (createOrdinatorDto.allowanceStartDate) {
+  
+    if (createOrdinatorDto.allowanceStartDate || createOrdinatorDto.allowanceEndDate) {
       money = this.moneyRepository.create({
         allowanceStartDate: createOrdinatorDto.allowanceStartDate,
         allowanceEndDate: createOrdinatorDto.allowanceEndDate,
       });
       money = await this.moneyRepository.save(money);
     }
-
-    if (createOrdinatorDto.sessionStart) {
+  
+    if (createOrdinatorDto.sessionStart || createOrdinatorDto.sessionEnd) {
       session = this.sessionRepository.create({
         sessionStart: createOrdinatorDto.sessionStart,
         sessionEnd: createOrdinatorDto.sessionEnd,
       });
       session = await this.sessionRepository.save(session);
     }
-
-    if (createOrdinatorDto.socialLeave) {
+  
+    if (createOrdinatorDto.socialLeaveStart || createOrdinatorDto.socialLeaveEnd) {
       vacation = this.vacationRepository.create({
-        vacationStart: new Date(),
-        vacationEnd: new Date(), 
+        vacationStart: createOrdinatorDto.socialLeaveStart,
+        vacationEnd: createOrdinatorDto.socialLeaveEnd,
       });
       vacation = await this.vacationRepository.save(vacation);
     }
-
+  
     educationInfo = this.educationInfoRepository.create({});
     educationInfo = await this.educationInfoRepository.save(educationInfo);
-
+  
     const ordinatorData: Partial<Ordinator> = {
       fio: createOrdinatorDto.fio,
       fioEn: createOrdinatorDto.fioEn,
@@ -95,18 +95,23 @@ export class OrdinatorsService {
       dismissalDate: createOrdinatorDto.dismissalDate,
       dismissalReason: createOrdinatorDto.dismissalReason,
       socialLeave: createOrdinatorDto.socialLeave,
-      socialLeaveDuration: createOrdinatorDto.socialLeaveDuration,
+      socialLeaveStart: createOrdinatorDto.socialLeaveStart,
+      socialLeaveEnd: createOrdinatorDto.socialLeaveEnd,
       mobilePhone: createOrdinatorDto.mobilePhone,
       identityDocument: createOrdinatorDto.identityDocument,
       documentNumber: createOrdinatorDto.documentNumber,
       residenceAddress: createOrdinatorDto.residenceAddress,
       registrationExpiry: createOrdinatorDto.registrationExpiry,
-      enrollmentOrder: createOrdinatorDto.enrollmentOrder,
-      dismissalOrder: createOrdinatorDto.dismissalOrder,
+      enrollmentOrderNumber: createOrdinatorDto.enrollmentOrderNumber,
+      enrollmentOrderDate: createOrdinatorDto.enrollmentOrderDate,
+      dismissalOrderNumber: createOrdinatorDto.dismissalOrderNumber,
+      dismissalOrderDate: createOrdinatorDto.dismissalOrderDate,
       contractInfo: createOrdinatorDto.contractInfo,
       medicalCertificate: createOrdinatorDto.medicalCertificate,
       login: createOrdinatorDto.login,
-      password: createOrdinatorDto.password,
+      password: createOrdinatorDto.password, 
+      identNumber: createOrdinatorDto.identNumber,
+      livingAddress: createOrdinatorDto.livingAddress,
       rivshCertificate: createOrdinatorDto.rivshCertificate,
       entryByInvitation: createOrdinatorDto.entryByInvitation,
       distributionInfo: createOrdinatorDto.distributionInfo,
@@ -117,10 +122,10 @@ export class OrdinatorsService {
       vacation: vacation || undefined,
       educationInfo: educationInfo || undefined,
     };
-
+  
     const ordinator = this.ordinatorsRepository.create(ordinatorData);
     const savedOrdinator = await this.ordinatorsRepository.save(ordinator);
-
+  
     return this.findOne(savedOrdinator.id);
   }
 
@@ -164,42 +169,66 @@ export class OrdinatorsService {
 
   async update(id: number, updateOrdinatorDto: UpdateOrdinatorDto) {
     const ordinator = await this.findOne(id);
-
-    Object.assign(ordinator, updateOrdinatorDto);
-
-    if (ordinator.university && (updateOrdinatorDto.universityName || updateOrdinatorDto.graduationYear)) {
-      Object.assign(ordinator.university, {
-        name: updateOrdinatorDto.universityName || ordinator.university.name,
-        graduationYear: updateOrdinatorDto.graduationYear || ordinator.university.graduationYear,
-        department: updateOrdinatorDto.department || ordinator.university.department,
-        specialtyProfile: updateOrdinatorDto.specialtyProfile || ordinator.university.specialtyProfile,
-        specialty: updateOrdinatorDto.specialty || ordinator.university.specialty,
-        preparationForm: updateOrdinatorDto.preparationForm || ordinator.university.preparationForm,
-      });
+  
+    if (updateOrdinatorDto.fio !== undefined) ordinator.fio = updateOrdinatorDto.fio;
+    if (updateOrdinatorDto.fioEn !== undefined) ordinator.fioEn = updateOrdinatorDto.fioEn;
+    if (updateOrdinatorDto.birthYear !== undefined) ordinator.birthYear = updateOrdinatorDto.birthYear;
+    if (updateOrdinatorDto.gender !== undefined) ordinator.gender = updateOrdinatorDto.gender;
+    if (updateOrdinatorDto.country !== undefined) ordinator.country = updateOrdinatorDto.country;
+    if (updateOrdinatorDto.enrollmentDate !== undefined) ordinator.enrollmentDate = updateOrdinatorDto.enrollmentDate;
+    if (updateOrdinatorDto.dismissalDate !== undefined) ordinator.dismissalDate = updateOrdinatorDto.dismissalDate;
+    if (updateOrdinatorDto.dismissalReason !== undefined) ordinator.dismissalReason = updateOrdinatorDto.dismissalReason;
+    if (updateOrdinatorDto.socialLeave !== undefined) ordinator.socialLeave = updateOrdinatorDto.socialLeave;
+    if (updateOrdinatorDto.socialLeaveStart !== undefined) ordinator.socialLeaveStart = updateOrdinatorDto.socialLeaveStart;
+    if (updateOrdinatorDto.socialLeaveEnd !== undefined) ordinator.socialLeaveEnd = updateOrdinatorDto.socialLeaveEnd;
+    if (updateOrdinatorDto.mobilePhone !== undefined) ordinator.mobilePhone = updateOrdinatorDto.mobilePhone;
+    if (updateOrdinatorDto.identityDocument !== undefined) ordinator.identityDocument = updateOrdinatorDto.identityDocument;
+    if (updateOrdinatorDto.documentNumber !== undefined) ordinator.documentNumber = updateOrdinatorDto.documentNumber;
+    if (updateOrdinatorDto.residenceAddress !== undefined) ordinator.residenceAddress = updateOrdinatorDto.residenceAddress;
+    if (updateOrdinatorDto.registrationExpiry !== undefined) ordinator.registrationExpiry = updateOrdinatorDto.registrationExpiry;
+    if (updateOrdinatorDto.enrollmentOrderNumber !== undefined) ordinator.enrollmentOrderNumber = updateOrdinatorDto.enrollmentOrderNumber;
+    if (updateOrdinatorDto.enrollmentOrderDate !== undefined) ordinator.enrollmentOrderDate = updateOrdinatorDto.enrollmentOrderDate;
+    if (updateOrdinatorDto.dismissalOrderNumber !== undefined) ordinator.dismissalOrderNumber = updateOrdinatorDto.dismissalOrderNumber;
+    if (updateOrdinatorDto.dismissalOrderDate !== undefined) ordinator.dismissalOrderDate = updateOrdinatorDto.dismissalOrderDate;
+    if (updateOrdinatorDto.contractInfo !== undefined) ordinator.contractInfo = updateOrdinatorDto.contractInfo;
+    if (updateOrdinatorDto.medicalCertificate !== undefined) ordinator.medicalCertificate = updateOrdinatorDto.medicalCertificate;
+    if (updateOrdinatorDto.login !== undefined) ordinator.login = updateOrdinatorDto.login;
+    if (updateOrdinatorDto.password !== undefined) ordinator.password = updateOrdinatorDto.password;
+    if (updateOrdinatorDto.identNumber !== undefined) ordinator.identNumber = updateOrdinatorDto.identNumber;
+    if (updateOrdinatorDto.livingAddress !== undefined) ordinator.livingAddress = updateOrdinatorDto.livingAddress;
+    if (updateOrdinatorDto.rivshCertificate !== undefined) ordinator.rivshCertificate = updateOrdinatorDto.rivshCertificate;
+    if (updateOrdinatorDto.entryByInvitation !== undefined) ordinator.entryByInvitation = updateOrdinatorDto.entryByInvitation;
+    if (updateOrdinatorDto.distributionInfo !== undefined) ordinator.distributionInfo = updateOrdinatorDto.distributionInfo;
+  
+    if (ordinator.university) {
+      if (updateOrdinatorDto.universityName !== undefined) ordinator.university.name = updateOrdinatorDto.universityName;
+      if (updateOrdinatorDto.graduationYear !== undefined) ordinator.university.graduationYear = updateOrdinatorDto.graduationYear;
+      if (updateOrdinatorDto.department !== undefined) ordinator.university.department = updateOrdinatorDto.department;
+      if (updateOrdinatorDto.specialtyProfile !== undefined) ordinator.university.specialtyProfile = updateOrdinatorDto.specialtyProfile;
+      if (updateOrdinatorDto.specialty !== undefined) ordinator.university.specialty = updateOrdinatorDto.specialty;
+      if (updateOrdinatorDto.preparationForm !== undefined) ordinator.university.preparationForm = updateOrdinatorDto.preparationForm;
     }
-
-    if (ordinator.currentControl && updateOrdinatorDto.scores) {
-      Object.assign(ordinator.currentControl, {
-        scores: updateOrdinatorDto.scores,
-      });
+  
+    if (ordinator.currentControl && updateOrdinatorDto.scores !== undefined) {
+      ordinator.currentControl.scores = updateOrdinatorDto.scores;
     }
-
-    if (ordinator.money && (updateOrdinatorDto.allowanceStartDate || updateOrdinatorDto.allowanceEndDate)) {
-      Object.assign(ordinator.money, {
-        allowanceStartDate: updateOrdinatorDto.allowanceStartDate || ordinator.money.allowanceStartDate,
-        allowanceEndDate: updateOrdinatorDto.allowanceEndDate || ordinator.money.allowanceEndDate,
-      });
+  
+    if (ordinator.money) {
+      if (updateOrdinatorDto.allowanceStartDate !== undefined) ordinator.money.allowanceStartDate = updateOrdinatorDto.allowanceStartDate;
+      if (updateOrdinatorDto.allowanceEndDate !== undefined) ordinator.money.allowanceEndDate = updateOrdinatorDto.allowanceEndDate;
     }
-
-    if (ordinator.session && (updateOrdinatorDto.sessionStart || updateOrdinatorDto.sessionEnd)) {
-      Object.assign(ordinator.session, {
-        sessionStart: updateOrdinatorDto.sessionStart || ordinator.session.sessionStart,
-        sessionEnd: updateOrdinatorDto.sessionEnd || ordinator.session.sessionEnd,
-      });
+  
+    if (ordinator.session) {
+      if (updateOrdinatorDto.sessionStart !== undefined) ordinator.session.sessionStart = updateOrdinatorDto.sessionStart;
+      if (updateOrdinatorDto.sessionEnd !== undefined) ordinator.session.sessionEnd = updateOrdinatorDto.sessionEnd;
     }
-
+  
+    if (ordinator.vacation) {
+      if (updateOrdinatorDto.socialLeaveStart !== undefined) ordinator.vacation.vacationStart = updateOrdinatorDto.socialLeaveStart;
+      if (updateOrdinatorDto.socialLeaveEnd !== undefined) ordinator.vacation.vacationEnd = updateOrdinatorDto.socialLeaveEnd;
+    }
+  
     await this.ordinatorsRepository.save(ordinator);
-
     return this.findOne(id);
   }
 
