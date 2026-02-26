@@ -9,40 +9,110 @@ import {
     Query,
     UseGuards,
     ParseIntPipe,
+    Req,
   } from '@nestjs/common';
   import { OrdinatorsService } from './ordinators.service';
   import { CreateOrdinatorDto } from './dto/create-ordinator.dto';
   import { UpdateOrdinatorDto } from './dto/update-ordinator.dto';
-
+  import { LogsService } from '../logs/logs.service'; 
+  
   @Controller('ordinators')
   export class OrdinatorsController {
-    constructor(private readonly ordinatorsService: OrdinatorsService) {}
+    constructor(
+      private readonly ordinatorsService: OrdinatorsService,
+      private readonly logsService: LogsService, 
+    ) {}
   
     @Post()
-    create(@Body() createOrdinatorDto: CreateOrdinatorDto) {
-      return this.ordinatorsService.create(createOrdinatorDto);
+    async create(@Body() createOrdinatorDto: CreateOrdinatorDto, @Req() req) {
+      const result = await this.ordinatorsService.create(createOrdinatorDto);
+      
+      await this.logsService.create({
+        userId: req.user?.id,
+        userFio: req.user?.fio,
+        userRole: req.user?.role,
+        actionType: 'CREATE_ORDINATOR',
+        description: `Создание ординатора: ${createOrdinatorDto.fio}`,
+        targetInfo: `ID: ${result.id}`,
+        ipAddress: req.ip,
+      });
+      
+      return result;
     }
   
     @Get()
-    findAll(@Query() filters: any) {
-      return this.ordinatorsService.findAll();
+    async findAll(@Query() filters: any, @Req() req) {
+      const result = await this.ordinatorsService.findAll();
+      
+      if (Object.keys(filters).length > 0) {
+        await this.logsService.create({
+          userId: req.user?.id,
+          userFio: req.user?.fio,
+          userRole: req.user?.role,
+          actionType: 'VIEW_LIST',
+          description: `Просмотр списка ординаторов с фильтрами`,
+          targetInfo: `Фильтры: ${JSON.stringify(filters)}`,
+          ipAddress: req.ip,
+        });
+      }
+      
+      return result;
     }
   
     @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
-      return this.ordinatorsService.findOne(id);
+    async findOne(@Param('id', ParseIntPipe) id: number, @Req() req) {
+      const result = await this.ordinatorsService.findOne(id);
+      
+      await this.logsService.create({
+        userId: req.user?.id,
+        userFio: req.user?.fio,
+        userRole: req.user?.role,
+        actionType: 'VIEW_ORDINATOR',
+        description: `Просмотр карточки ординатора: ${result?.fio}`,
+        targetInfo: `ID: ${id}`,
+        ipAddress: req.ip,
+      });
+      
+      return result;
     }
   
     @Patch(':id')
-    update(
+    async update(
       @Param('id', ParseIntPipe) id: number,
       @Body() updateOrdinatorDto: UpdateOrdinatorDto,
+      @Req() req,
     ) {
-      return this.ordinatorsService.update(id, updateOrdinatorDto);
+      const oldData = await this.ordinatorsService.findOne(id);
+      const result = await this.ordinatorsService.update(id, updateOrdinatorDto);
+      
+      await this.logsService.create({
+        userId: req.user?.id,
+        userFio: req.user?.fio,
+        userRole: req.user?.role,
+        actionType: 'UPDATE_ORDINATOR',
+        description: `Обновление данных ординатора: ${oldData?.fio}`,
+        targetInfo: `ID: ${id}`,
+        ipAddress: req.ip,
+      });
+      
+      return result;
     }
   
     @Delete(':id')
-    remove(@Param('id', ParseIntPipe) id: number) {
-      return this.ordinatorsService.remove(id);
+    async remove(@Param('id', ParseIntPipe) id: number, @Req() req) {
+      const ordinator = await this.ordinatorsService.findOne(id);
+      await this.ordinatorsService.remove(id);
+      
+      await this.logsService.create({
+        userId: req.user?.id,
+        userFio: req.user?.fio,
+        userRole: req.user?.role,
+        actionType: 'DELETE_ORDINATOR',
+        description: `Удаление ординатора: ${ordinator?.fio}`,
+        targetInfo: `ID: ${id}`,
+        ipAddress: req.ip,
+      });
+      
+      return { success: true };
     }
   }

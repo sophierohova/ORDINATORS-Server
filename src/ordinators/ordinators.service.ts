@@ -38,7 +38,6 @@ export class OrdinatorsService {
     let vacation: Vacation | null = null;
     let educationInfo: EducationInfo | null = null;
   
-    // Создаем объекты связанных сущностей
     if (createOrdinatorDto.universityName) {
       university = this.universityRepository.create({
         name: createOrdinatorDto.universityName,

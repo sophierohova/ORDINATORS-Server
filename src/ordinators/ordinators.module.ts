@@ -10,6 +10,7 @@ import { Session } from './entities/session.entity';
 import { Vacation } from './entities/vacation.entity';
 import { EducationInfo } from './entities/education_info.entity';
 import { Worker } from '../users/entities/worker.entity';
+import { LogsModule } from '../logs/logs.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { Worker } from '../users/entities/worker.entity';
       EducationInfo,
       Worker,
     ]),
+    LogsModule,
   ],
   controllers: [OrdinatorsController],
   providers: [OrdinatorsService],
