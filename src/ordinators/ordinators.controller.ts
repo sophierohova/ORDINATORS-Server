@@ -15,8 +15,10 @@ import {
   import { CreateOrdinatorDto } from './dto/create-ordinator.dto';
   import { UpdateOrdinatorDto } from './dto/update-ordinator.dto';
   import { LogsService } from '../logs/logs.service'; 
+  import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
   
   @Controller('ordinators')
+  @UseGuards(JwtAuthGuard)
   export class OrdinatorsController {
     constructor(
       private readonly ordinatorsService: OrdinatorsService,
@@ -109,7 +111,7 @@ import {
         userRole: req.user?.role,
         actionType: 'DELETE_ORDINATOR',
         description: `Удаление ординатора: ${ordinator?.fio}`,
-        targetInfo: `ID: ${id}`,
+        targetInfo: `ID: ${id}, Удалил: ${req.user?.fio} (${req.user?.role})`,
         ipAddress: req.ip,
       });
       
