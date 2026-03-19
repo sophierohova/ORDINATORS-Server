@@ -8,6 +8,7 @@ import { LogsModule } from './logs/logs.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { SessionMiddleware } from './sessions/session.middleware';
 import { Session } from './sessions/session.entity';
+import { OptionsModule } from './options/options.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { Session } from './sessions/session.entity';
     UsersModule, 
     OrdinatorsModule,
     LogsModule,
-    SessionsModule, 
+    SessionsModule,
+    OptionsModule,
   ],
 })
 export class AppModule implements NestModule {
